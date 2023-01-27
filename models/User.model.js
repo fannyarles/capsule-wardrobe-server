@@ -19,7 +19,11 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: [true, 'Password is required.']
-    }
+    },
+    items: [{
+      type: Schema.Types.ObjectId,
+      ref: 'ClothingItem'
+    }]
   },
   {
     // this second object adds extra properties: `createdAt` and `updatedAt`    

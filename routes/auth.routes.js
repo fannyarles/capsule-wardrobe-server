@@ -8,11 +8,12 @@ router.post('/login', async (req, res, next) => {
     const { username, password } = req.body;
 
     const user = await User.findOne({ username }).catch(err => res.status(500).json({ message: `Internal Service Error.` }));
-    if ( !user ) { return res.status(400).json({ message: `User not found.` }); } 
-
+    
+    if ( !user ) { res.status(400).json({ message: `User not found.` }); return; } 
     const checkPassword = bcrypt.compareSync(password, user.password);
+    
     console.log(password, user.password)
-    if ( !checkPassword ) { return res.status(401).json({ message: `Unable to authenticate user.`}); }
+    if ( !checkPassword ) { res.status(401).json({ message: `Unable to authenticate user.`}); return; }
     
     const payload = { id: user._id, username: user.username };
     const authToken = jwt.sign(
