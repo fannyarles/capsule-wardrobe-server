@@ -24,6 +24,9 @@ app.use('/auth', authRoutes);
 const dressingRoutes = require('./routes/dressing.routes');
 app.use('/dressing', dressingRoutes)
 
+const outfitsRoutes = require('./routes/outfits.routes');
+app.use('/outfits', outfitsRoutes)
+
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 require("./error-handling")(app);
 

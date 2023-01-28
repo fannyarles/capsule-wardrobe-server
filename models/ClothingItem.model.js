@@ -2,12 +2,15 @@ const { model, Schema } = require('mongoose');
 
 const clothingItemSchema = new Schema(
     {
-        type: { 
+        category: {
             type: String,
             required: true
         },
+        type: {
+            type: String
+        },
         brand: String,
-        occasions: [{ 
+        occasions: [{
             type: String,
             enum: ['casual', 'business', 'formal', 'sportswear']
         }],
