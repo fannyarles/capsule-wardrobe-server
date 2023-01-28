@@ -48,23 +48,24 @@ router.post('/random', async (req, res, next) => {
         // MATCH TOPS WITH BOTTOMS
         filteredItems.forEach(item => {
 
-            const randNum = Math.floor(Math.random() * footwearItems.length);
-            const randShoes = footwearItems[randNum];
-
             // If "Tops", add "Bottoms"
             if (item.type === 'Tops') {
-                const randNum = Math.floor(Math.random() * bottomsItems.length);
-                const randBottoms = bottomsItems[randNum];
+                const randNumBottoms = Math.floor(Math.random() * bottomsItems.length);
+                const randBottoms = bottomsItems[randNumBottoms];
+                const randNumShoes = Math.floor(Math.random() * footwearItems.length);
+                const randShoes = footwearItems[randNumShoes];
                 const newoutfit = [item, randBottoms, randShoes];
-                if (outfits.indexOf(newoutfit) === -1) outfits.push(newoutfit);
+                outfits.push(newoutfit);
             }
 
             // If "Bottoms", add "Tops"
             if (item.type === 'Bottoms') {
-                const randNum = Math.floor(Math.random() * topsItems.length);
-                const randTop = topsItems[randNum];
+                const randNumTop = Math.floor(Math.random() * topsItems.length);
+                const randTop = topsItems[randNumTop];
+                const randNumShoes = Math.floor(Math.random() * footwearItems.length);
+                const randShoes = footwearItems[randNumShoes];
                 const newoutfit = [randTop, item, randShoes];
-                if (outfits.indexOf(newoutfit) === -1) outfits.push(newoutfit);
+                outfits.push(newoutfit);
             }
 
         });
