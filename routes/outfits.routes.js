@@ -1,6 +1,9 @@
 const { categories } = require('../data/itemsParams.data');
 const router = require('express').Router();
-const ClothingItem = require('../models/ClothingItem.model')
+const User = require('../models/User.model');
+const ClothingItem = require('../models/ClothingItem.model');
+const Outfit = require('../models/Outfit.model');
+const { isAuthenticated } = require('../middlewares/jwt.middleware');
 
 
 router.post('/random', async (req, res, next) => {
@@ -32,7 +35,7 @@ router.post('/random', async (req, res, next) => {
         onePieceItems.forEach(item => {
             const randNum = Math.floor(Math.random() * footwearItems.length);
             const randShoes = footwearItems[randNum];
-            outfits.push([item, randShoes]);
+            const newoutfit = { type: "onePiece", piece: item, footwear: randShoes };
         });
 
     };
@@ -54,7 +57,7 @@ router.post('/random', async (req, res, next) => {
                 const randBottoms = bottomsItems[randNumBottoms];
                 const randNumShoes = Math.floor(Math.random() * footwearItems.length);
                 const randShoes = footwearItems[randNumShoes];
-                const newoutfit = [item, randBottoms, randShoes];
+                const newoutfit = { type: "twoPiece", top: item, bottoms: randBottoms, footwear: randShoes };
                 outfits.push(newoutfit);
             }
 
@@ -64,7 +67,7 @@ router.post('/random', async (req, res, next) => {
                 const randTop = topsItems[randNumTop];
                 const randNumShoes = Math.floor(Math.random() * footwearItems.length);
                 const randShoes = footwearItems[randNumShoes];
-                const newoutfit = [randTop, item, randShoes];
+                const newoutfit = { type: "twoPiece", top: randTop, bottoms: item, footwear: randShoes };
                 outfits.push(newoutfit);
             }
 
@@ -79,6 +82,24 @@ router.post('/random', async (req, res, next) => {
 
     // if (pieceItem !== 'any') { filteredItems = filteredItems.filter(item => item.category === pieceItem) };
 
+});
+
+router.post('/save', isAuthenticated, (req, res, next) => {
+    req.body.ownerId = req.payload.id;
+    Outfit.create(req.body)
+        .then(outfit => User.findByIdAndUpdate(req.payload.id, { $push: { outfits: outfit._id } }))
+        .then(() => res.status(201).json({ message: `Item created.` }))
+        .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
+});
+
+router.get('/saved', isAuthenticated, (req, res, next) => {
+    Outfit.find({ ownerId: req.payload.id })
+        .populate('top')
+        .populate('bottoms')
+        .populate('piece')
+        .populate('footwear')
+        .then(outfits => res.status(200).json(outfits))
+        .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
 });
 
 module.exports = router;

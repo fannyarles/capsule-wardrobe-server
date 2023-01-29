@@ -23,6 +23,10 @@ const userSchema = new Schema(
     items: [{
       type: Schema.Types.ObjectId,
       ref: 'ClothingItem'
+    }],
+    outfits: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Outfit'
     }]
   },
   {
