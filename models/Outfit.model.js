@@ -7,6 +7,11 @@ const outfitSchema = new Schema(
             enum: ['onePiece', 'twoPiece'],
             required: true
         },
+        occasion: {
+            type: String,
+            enum: ['casual', 'formal', 'business', 'sportswear'],
+            required: true
+        },
         top: {
             type: Schema.Types.ObjectId,
             ref: 'ClothingItem'

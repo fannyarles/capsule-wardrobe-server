@@ -5,6 +5,15 @@ const ClothingItem = require('../models/ClothingItem.model');
 const Outfit = require('../models/Outfit.model');
 const { isAuthenticated } = require('../middlewares/jwt.middleware');
 
+router.get('/view/:outfitId', (req, res, next) => {
+    Outfit.findById(req.params.outfitId)
+        .populate('top')
+        .populate('bottoms')
+        .populate('piece')
+        .populate('footwear')
+        .then(response => res.status(200).json(response))
+        .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
+});
 
 router.post('/random', async (req, res, next) => {
     const { category, pieceItem, occasion } = req.body;
@@ -75,8 +84,8 @@ router.post('/random', async (req, res, next) => {
 
     }
 
-    console.log(outfits.length)
-    res.status(200).json(outfits)
+    const results = { occasion: occasion, outfits: outfits }
+    res.status(200).json(results)
 
     // if (!items.length) { res.status(400).json({ message: `You have no outfits matching these choices.` }); return; };
 
@@ -92,6 +101,12 @@ router.post('/save', isAuthenticated, (req, res, next) => {
         .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
 });
 
+router.put('/save/:outfitId', isAuthenticated, (req, res, next) => {
+    Outfit.findByIdAndUpdate(req.params.outfitId, req.body)
+        .then(() => res.status(201).json({ message: `Item updated.` }))
+        .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
+});
+
 router.get('/saved', isAuthenticated, (req, res, next) => {
     Outfit.find({ ownerId: req.payload.id })
         .populate('top')
@@ -99,6 +114,16 @@ router.get('/saved', isAuthenticated, (req, res, next) => {
         .populate('piece')
         .populate('footwear')
         .then(outfits => res.status(200).json(outfits))
+        .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
+});
+
+router.delete('/delete/:outfitId', (req, res, next) => {
+    Outfit.findByIdAndDelete({ _id: req.params.outfitId })
+        .then(deletedOutfit => {
+            return User.findByIdAndUpdate(deletedOutfit.ownerId, { $pull: { outfits: deletedOutfit._id } })
+                .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
+        })
+        .then(response => res.status(200).json({ message: `Item deleted.` }))
         .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
 });
 

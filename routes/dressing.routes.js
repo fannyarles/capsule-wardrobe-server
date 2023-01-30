@@ -3,6 +3,7 @@ const ClothingItem = require('../models/ClothingItem.model');
 const User = require('../models/User.model');
 const { Schema } = require('mongoose');
 const { categories } = require('../data/itemsParams.data');
+const { isAuthenticated } = require('../middlewares/jwt.middleware');
 
 const router = require('express').Router();
 
@@ -69,6 +70,17 @@ router.delete('/item/:itemId', (req, res, next) => {
                 .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
         })
         .then(response => res.status(200).json({ message: `Item deleted.` }))
+        .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
+});
+
+router.get('/switch/:occasion/:itemType/:currId', isAuthenticated, (req, res, next) => {
+    const { occasion, itemType, currId } = req.params;
+    const { id } = req.payload;
+    ClothingItem.find({ _id: { $ne: currId }, ownerId: id, occasions: { $in: [occasion] }, type: itemType })
+        .then(response => {
+            const randNum = Math.floor(Math.random() * response.length)
+            res.status(200).json(response[randNum])
+        })
         .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
 });
 
