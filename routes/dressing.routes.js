@@ -76,7 +76,7 @@ router.delete('/item/:itemId', (req, res, next) => {
 router.get('/switch/:occasion/:itemType/:currId', isAuthenticated, (req, res, next) => {
     const { occasion, itemType, currId } = req.params;
     const { id } = req.payload;
-    ClothingItem.find({ _id: { $ne: currId }, ownerId: id, occasions: { $in: [occasion] }, type: itemType })
+    ClothingItem.find({ _id: { $ne: currId }, ownerId: id, occasions: { $in: occasion }, type: itemType })
         .then(response => {
             const randNum = Math.floor(Math.random() * response.length)
             res.status(200).json(response[randNum])

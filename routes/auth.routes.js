@@ -8,14 +8,13 @@ router.post('/login', async (req, res, next) => {
     const { username, password } = req.body;
 
     const user = await User.findOne({ username }).catch(err => res.status(500).json({ message: `Internal Service Error.` }));
-    
-    if ( !user ) { res.status(400).json({ message: `User not found.` }); return; } 
+
+    if (!user) { res.status(400).json({ message: `User not found.` }); return; }
     const checkPassword = bcrypt.compareSync(password, user.password);
-    
-    console.log(password, user.password)
-    if ( !checkPassword ) { res.status(401).json({ message: `Unable to authenticate user.`}); return; }
-    
-    const payload = { id: user._id, username: user.username };
+
+    if (!checkPassword) { res.status(401).json({ message: `Unable to authenticate user.` }); return; }
+
+    const payload = { id: user._id, username: user.username, avatarUrl: user.avatarUrl };
     const authToken = jwt.sign(
         payload,
         process.env.TOKEN_SECRET,
@@ -26,13 +25,13 @@ router.post('/login', async (req, res, next) => {
     )
 
     res.status(200).json({ authToken });
-    
+
 });
 
 router.post('/signup', (req, res, next) => {
     const { username, email, password } = req.body;
 
-    if ( username === '' || email === '' || password === '' ) {
+    if (username === '' || email === '' || password === '') {
         res.status(400).json({ message: `All fields are required.` });
         return;
     }
@@ -54,11 +53,11 @@ router.post('/signup', (req, res, next) => {
     const hashPassword = bcrypt.hashSync(password, 10);
 
     return User.create({ email, username, password: hashPassword })
-    .then(response => res.status(201).json({ message: `User created.`}))
-    .catch(err => res.status(500).json({ message: `Internal Server Error.` }));
+        .then(response => res.status(201).json({ message: `User created.` }))
+        .catch(err => res.status(500).json({ message: `Internal Server Error.` }));
 
 });
 
-router.get('/verify', isAuthenticated, (req, res, next) => res.status(200).json( req.payload ));
+router.get('/verify', isAuthenticated, (req, res, next) => res.status(200).json(req.payload));
 
 module.exports = router;

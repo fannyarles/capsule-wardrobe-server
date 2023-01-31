@@ -20,6 +20,9 @@ const userSchema = new Schema(
       type: String,
       required: [true, 'Password is required.']
     },
+    avatarUrl: {
+      type: String
+    },
     items: [{
       type: Schema.Types.ObjectId,
       ref: 'ClothingItem'

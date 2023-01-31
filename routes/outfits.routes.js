@@ -32,6 +32,11 @@ router.post('/random', async (req, res, next) => {
 
     // GET SHOES
     const footwearItems = filteredItems.filter(item => item.type === "Footwear");
+    const getRandShoes = () => footwearItems[Math.floor(Math.random() * footwearItems.length)];
+
+    // GET LAYER
+    const layerItems = filteredItems.filter(item => item.type === "Layers");
+    const getRandLayers = () => layerItems[Math.floor(Math.random() * layerItems.length)];
 
     // ONE-PIECE OUTFIT GENERATOR
     if (category === 'onePiece' || category === '') {
@@ -42,9 +47,8 @@ router.post('/random', async (req, res, next) => {
 
         // CREATE OUTFITS BY ADDING SHOES
         onePieceItems.forEach(item => {
-            const randNum = Math.floor(Math.random() * footwearItems.length);
-            const randShoes = footwearItems[randNum];
-            const newoutfit = { type: "onePiece", piece: item, footwear: randShoes };
+            const newoutfit = { type: "onePiece", piece: item, footwear: getRandShoes(), layers: getRandLayers() };
+            outfits.push(newoutfit);
         });
 
     };
@@ -58,45 +62,32 @@ router.post('/random', async (req, res, next) => {
         if (pieceItem) { bottomsItems = bottomsItems.filter(item => item.category === pieceItem) }
 
         // MATCH TOPS WITH BOTTOMS
-        filteredItems.forEach(item => {
+        topsItems.forEach(item => {
+            const randBottoms = bottomsItems[Math.floor(Math.random() * bottomsItems.length)];
+            const newoutfit = { type: "twoPiece", top: item, bottoms: randBottoms, footwear: getRandShoes(), layers: getRandLayers() };
+            outfits.push(newoutfit);
+        });
 
-            // If "Tops", add "Bottoms"
-            if (item.type === 'Tops') {
-                const randNumBottoms = Math.floor(Math.random() * bottomsItems.length);
-                const randBottoms = bottomsItems[randNumBottoms];
-                const randNumShoes = Math.floor(Math.random() * footwearItems.length);
-                const randShoes = footwearItems[randNumShoes];
-                const newoutfit = { type: "twoPiece", top: item, bottoms: randBottoms, footwear: randShoes };
-                outfits.push(newoutfit);
-            }
-
-            // If "Bottoms", add "Tops"
-            if (item.type === 'Bottoms') {
-                const randNumTop = Math.floor(Math.random() * topsItems.length);
-                const randTop = topsItems[randNumTop];
-                const randNumShoes = Math.floor(Math.random() * footwearItems.length);
-                const randShoes = footwearItems[randNumShoes];
-                const newoutfit = { type: "twoPiece", top: randTop, bottoms: item, footwear: randShoes };
-                outfits.push(newoutfit);
-            }
-
+        // MATCH BOTTOMS WITH TOPS
+        bottomsItems.forEach(item => {
+            const randTop = topsItems[Math.floor(Math.random() * topsItems.length)];
+            const newoutfit = { type: "twoPiece", top: randTop, bottoms: item, footwear: getRandShoes(), layers: getRandLayers() };
+            outfits.push(newoutfit);
         });
 
     }
 
     const results = { occasion: occasion, outfits: outfits }
-    res.status(200).json(results)
-
-    // if (!items.length) { res.status(400).json({ message: `You have no outfits matching these choices.` }); return; };
-
-    // if (pieceItem !== 'any') { filteredItems = filteredItems.filter(item => item.category === pieceItem) };
+    res.status(200).json(results);
 
 });
 
 router.post('/save', isAuthenticated, (req, res, next) => {
     req.body.ownerId = req.payload.id;
     Outfit.create(req.body)
-        .then(outfit => User.findByIdAndUpdate(req.payload.id, { $push: { outfits: outfit._id } }))
+        .then(outfit => {
+            User.findByIdAndUpdate(req.payload.id, { $push: { outfits: outfit._id } });
+        })
         .then(() => res.status(201).json({ message: `Item created.` }))
         .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
 });
