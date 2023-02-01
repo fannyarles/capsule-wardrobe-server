@@ -76,12 +76,38 @@ router.delete('/item/:itemId', (req, res, next) => {
 router.get('/switch/:occasion/:itemType/:currId', isAuthenticated, (req, res, next) => {
     const { occasion, itemType, currId } = req.params;
     const { id } = req.payload;
+
     ClothingItem.find({ _id: { $ne: currId }, ownerId: id, occasions: { $in: occasion }, type: itemType })
         .then(response => {
             const randNum = Math.floor(Math.random() * response.length)
             res.status(200).json(response[randNum])
         })
         .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
+});
+
+router.get('/items/top5', isAuthenticated, (req, res, next) => {
+    ClothingItem.aggregate([
+        {
+            $project: {
+                category: 1,
+                type: 1,
+                brand: 1,
+                occasion: 1,
+                imageUrl: 1,
+                outfits: 1,
+                length: { $cond: { if: { $isArray: "$outfits" }, then: { $size: "$outfits" }, else: 0 } }
+            }
+        }, {
+            $match: { length: { $ne: 0 } }
+        }, {
+            $sort: { length: -1 },
+        }, {
+            $limit: 5
+        }
+    ]
+    )
+        .then(response => res.status(200).json(response))
+        .catch(err => res.status(500).json({ message: `Internal Server Error.` }));
 });
 
 

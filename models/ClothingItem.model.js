@@ -22,7 +22,11 @@ const clothingItemSchema = new Schema(
         ownerId: {
             type: Schema.Types.ObjectId,
             ref: 'User'
-        }
+        },
+        outfits: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Outfit'
+        }]
     },
     {
         timestamps: true

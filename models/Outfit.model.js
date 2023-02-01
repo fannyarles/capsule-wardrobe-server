@@ -4,7 +4,7 @@ const outfitSchema = new Schema(
     {
         type: {
             type: String,
-            enum: ['onePiece', 'twoPiece'],
+            enum: ['1', '2'],
             required: true
         },
         occasion: {

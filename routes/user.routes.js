@@ -28,7 +28,6 @@ router.post('/edit/:userId', isAuthenticated, (req, res, next) => {
     User.findByIdAndUpdate(req.payload.id, req.body)
         .then(response => res.status(200).json({ message: `User updated.` }))
         .catch(err => res.status(500).json({ message: `Internal Server Error.` }));
-
 });
 
 module.exports = router;
