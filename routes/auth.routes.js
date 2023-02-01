@@ -14,7 +14,7 @@ router.post('/login', async (req, res, next) => {
 
     if (!checkPassword) { res.status(401).json({ message: `Unable to authenticate user.` }); return; }
 
-    const payload = { id: user._id, username: user.username, avatarUrl: user.avatarUrl };
+    const payload = { id: user._id, username: user.username, email: user.email, avatarUrl: user.avatarUrl };
     const authToken = jwt.sign(
         payload,
         process.env.TOKEN_SECRET,

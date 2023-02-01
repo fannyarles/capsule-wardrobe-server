@@ -24,6 +24,7 @@ router.get('/random/:occasion/:category/:pieceItem', async (req, res, next) => {
     if (category === '2') { if (!['any', 'Pants', 'Skirt'].includes(pieceItem)) { res.status(200).json(results); return; } }
 
     const outfits = [];
+    const outfitsStr = [];
 
     const items = await ClothingItem.find()
         .catch(err => res.status(500).json({ message: `Internal Server Error.` }));
@@ -54,7 +55,11 @@ router.get('/random/:occasion/:category/:pieceItem', async (req, res, next) => {
         // CREATE OUTFITS BY ADDING SHOES
         onePieceItems.forEach(item => {
             const newoutfit = { type: "1", piece: item, footwear: getRandShoes(), layers: getRandLayers() };
-            outfits.push(newoutfit);
+            const strOutfit = `${newoutfit.piece}|${newoutfit.footwear}`;
+            if (!outfitsStr.includes(strOutfit)) {
+                outfits.push(newoutfit);
+                outfitsStr.push(strOutfit)
+            }
         });
 
     };
@@ -71,14 +76,22 @@ router.get('/random/:occasion/:category/:pieceItem', async (req, res, next) => {
         topsItems.forEach(item => {
             const randBottoms = bottomsItems[Math.floor(Math.random() * bottomsItems.length)];
             const newoutfit = { type: "2", top: item, bottoms: randBottoms, footwear: getRandShoes(), layers: getRandLayers() };
-            outfits.push(newoutfit);
+            const strOutfit = `${newoutfit.top}|${newoutfit.bottoms}}|${newoutfit.footwear}`;
+            if (!outfitsStr.includes(strOutfit)) {
+                outfits.push(newoutfit);
+                outfitsStr.push(strOutfit)
+            }
         });
 
         // MATCH BOTTOMS WITH TOPS
         bottomsItems.forEach(item => {
             const randTop = topsItems[Math.floor(Math.random() * topsItems.length)];
             const newoutfit = { type: "2", top: randTop, bottoms: item, footwear: getRandShoes(), layers: getRandLayers() };
-            outfits.push(newoutfit);
+            const strOutfit = `${newoutfit.top}|${newoutfit.bottoms}}|${newoutfit.footwear}`;
+            if (!outfitsStr.includes(strOutfit)) {
+                outfits.push(newoutfit);
+                outfitsStr.push(strOutfit)
+            }
         });
 
     }
