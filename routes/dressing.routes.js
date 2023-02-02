@@ -1,3 +1,4 @@
+const { ObjectId } = require('mongodb');
 const fileUploader = require('../config/cloudinary.config')
 const ClothingItem = require('../models/ClothingItem.model');
 const User = require('../models/User.model');
@@ -86,6 +87,7 @@ router.get('/switch/:occasion/:itemType/:currId', isAuthenticated, (req, res, ne
 });
 
 router.get('/items/top5', isAuthenticated, (req, res, next) => {
+
     ClothingItem.aggregate([
         {
             $project: {
@@ -95,10 +97,16 @@ router.get('/items/top5', isAuthenticated, (req, res, next) => {
                 occasion: 1,
                 imageUrl: 1,
                 outfits: 1,
+                ownerId: 1,
                 length: { $cond: { if: { $isArray: "$outfits" }, then: { $size: "$outfits" }, else: 0 } }
             }
         }, {
-            $match: { length: { $ne: 0 } }
+            $match: {
+                $and: [
+                    { length: { $ne: 0 } },
+                    { ownerId: ObjectId(req.payload.id) }
+                ]
+            }
         }, {
             $sort: { length: -1 },
         }, {

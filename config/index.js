@@ -23,7 +23,7 @@ module.exports = (app) => {
   app.use(
     cors({
       origin: process.env.ORIGIN,
-      credentials: true
+      credentials: true,
     })
   );
 

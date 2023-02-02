@@ -176,19 +176,30 @@ router.delete('/delete/:outfitId', isAuthenticated, (req, res, next) => {
 });
 
 router.get('/cat/top5', isAuthenticated, (req, res, next) => {
-    Category.aggregate([
-        {
-            $project: {
-                name: 1,
-                outfits: 1,
-                length: { $cond: { if: { $isArray: "$outfits" }, then: { $size: "$outfits" }, else: 0 } }
-            }
-        }, {
-            $sort: { length: -1 },
-        }
-    ]
-    )
-        .then(response => res.status(200).json(response))
+    Outfit.find({ ownerId: req.payload.id })
+        .then(response => {
+            const catResults = [{ name: "casual", count: 0 }, { name: "formal", count: 0 }, { name: "business", count: 0 }, { name: "sportswear", count: 0 }]
+            const outfitsData = [...response];
+            outfitsData.map(el => {
+                console.log(el.occasion)
+                switch (el.occasion) {
+                    case "casual":
+                        catResults[0].count++
+                        break;
+                    case "Formal":
+                        catResults[1].count++
+                        break;
+                    case "business":
+                        catResults[2].count++
+                        break;
+                    case "sportswear":
+                        catResults[3].count++
+                        break;
+                }
+            })
+            catResults.sort((a, b) => b.count - a.count);
+            res.status(200).json(catResults)
+        })
         .catch(err => res.status(500).json({ message: `Internal Server Error.` }));
 });
 
