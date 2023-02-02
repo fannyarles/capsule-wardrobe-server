@@ -30,4 +30,4 @@ router.post('/edit/:userId', isAuthenticated, (req, res, next) => {
         .catch(err => res.status(500).json({ message: `Internal Server Error.` }));
 });
 
-module.exports = router;
+module.exports = router; 
