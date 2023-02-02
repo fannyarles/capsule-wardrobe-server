@@ -10,6 +10,13 @@ REST API backend using Node & Express
 
 CRUD operations managed with Mongoose.
 
+## Models
+
+- User
+- ClothingItem
+- Outfit
+- Category
+
 ## Routes
 
 ### Auth
@@ -68,4 +75,4 @@ CRUD operations managed with Mongoose.
 
 [Deployed App](https://minfitapp.netlify.app/)
 
-[Front-End Git Repository](https://github.com/fannyarles/capsule-wardrobe-client)
+[Frontend Git Repository](https://github.com/fannyarles/capsule-wardrobe-client)
