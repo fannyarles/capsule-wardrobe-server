@@ -10,13 +10,13 @@ const router = require('express').Router();
 const getItemMainCategory = (item) => categories.find(el => el.items.includes(item.category)).name;
 
 
-router.get('/user/:userId', (req, res, next) => {
+router.get('/user/:userId', isAuthenticated, (req, res, next) => {
     ClothingItem.find({ ownerId: req.params.userId })
         .then(response => res.status(200).json(response))
         .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
 });
 
-router.post('/item/add', (req, res, next) => {
+router.post('/item/add', isAuthenticated, (req, res, next) => {
 
     req.body.type = getItemMainCategory(req.body)
 
@@ -26,7 +26,7 @@ router.post('/item/add', (req, res, next) => {
         .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
 });
 
-router.post('/item/uploadPic', fileUploader.single('imageUrl'), (req, res, next) => {
+router.post('/item/uploadPic', isAuthenticated, fileUploader.single('imageUrl'), (req, res, next) => {
 
     if (!req.file) {
         next(new Error("No file uploaded!"));
@@ -37,7 +37,7 @@ router.post('/item/uploadPic', fileUploader.single('imageUrl'), (req, res, next)
 
 });
 
-router.get('/item/:itemId', (req, res, next) => {
+router.get('/item/:itemId', isAuthenticated, (req, res, next) => {
     // res.json(req.params.itemId)
     ClothingItem.find({ _id: req.params.itemId })
         .then(response => res.status(200).json(response))
@@ -53,7 +53,7 @@ router.get('/item/:itemId/updatePic', fileUploader.single('imageUrl'), (req, res
     res.json({ fileUrl: req.file.path });
 });
 
-router.put('/item/:itemId', (req, res, next) => {
+router.put('/item/:itemId', isAuthenticated, (req, res, next) => {
 
     req.body.type = getItemMainCategory(req.body)
 
@@ -62,7 +62,7 @@ router.put('/item/:itemId', (req, res, next) => {
         .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
 });
 
-router.delete('/item/:itemId', (req, res, next) => {
+router.delete('/item/:itemId', isAuthenticated, (req, res, next) => {
     // res.json(req.params.itemId)
     ClothingItem.findByIdAndDelete({ _id: req.params.itemId })
         .then(item => {

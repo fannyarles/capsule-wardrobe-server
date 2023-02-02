@@ -6,7 +6,7 @@ const Outfit = require('../models/Outfit.model');
 const Category = require('../models/Category.model');
 const { isAuthenticated } = require('../middlewares/jwt.middleware');
 
-router.get('/view/:outfitId', (req, res, next) => {
+router.get('/view/:outfitId', isAuthenticated, (req, res, next) => {
     Outfit.findById(req.params.outfitId)
         .populate('top')
         .populate('bottoms')
@@ -16,7 +16,7 @@ router.get('/view/:outfitId', (req, res, next) => {
         .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
 });
 
-router.get('/random/:occasion/:category/:pieceItem', async (req, res, next) => {
+router.get('/random/:occasion/:category/:pieceItem', isAuthenticated, async (req, res, next) => {
     const { occasion, category, pieceItem } = req.params;
     const results = { occasion: occasion, outfits: [] }
 
@@ -33,7 +33,7 @@ router.get('/random/:occasion/:category/:pieceItem', async (req, res, next) => {
 
     let filteredItems = [...items];
 
-    // FILTER BY OCCASION
+    // FILTER BY OCCASION 
     if (occasion) { filteredItems = filteredItems.filter(el => el.occasions.includes(occasion)); }
     if (!items.length) { res.status(400).json({ message: `You have no '${occasion} pieces in your wardrobe yet.` }); return; };
 
@@ -155,7 +155,7 @@ router.get('/saved', isAuthenticated, (req, res, next) => {
         .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
 });
 
-router.delete('/delete/:outfitId', (req, res, next) => {
+router.delete('/delete/:outfitId', isAuthenticated, (req, res, next) => {
     Outfit.findByIdAndDelete({ _id: req.params.outfitId })
         .then(deletedOutfit => {
             User.findByIdAndUpdate(deletedOutfit.ownerId, { $pull: { outfits: deletedOutfit._id } })
