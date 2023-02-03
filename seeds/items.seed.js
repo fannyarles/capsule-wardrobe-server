@@ -7,7 +7,7 @@ const ClothingItemModel = require("../models/ClothingItem.model");
 // If no env has been set, we dynamically set it to whatever the folder name was upon the creation of the app
 
 const MONGO_URI =
-    process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/wardrobe-app-server";
+    "mongodb+srv://bali:*balinette974@bali.57aozpt.mongodb.net/test";
 
 const items =
 
@@ -499,4 +499,3 @@ mongoose
     .then((x) => {
         ClothingItemModel.create(items);
     })
-    .disconnect();

@@ -96,6 +96,8 @@ router.get('/random/:occasion/:category/:pieceItem', isAuthenticated, async (req
 
     }
 
+    console.log(outfits)
+
     res.status(200).json({ occasion: occasion, outfits: outfits });
 
 });
