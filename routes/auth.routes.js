@@ -7,6 +7,8 @@ const { isAuthenticated } = require("../middlewares/jwt.middleware");
 router.post('/login', async (req, res, next) => {
     const { username, password } = req.body;
 
+    if (!username || !password) { res.status(400).json({ message: `All fields are required.` }); return; }
+
     const user = await User.findOne({ username }).catch(err => res.status(500).json({ message: `Internal Service Error.` }));
 
     if (!user) { res.status(400).json({ message: `User not found.` }); return; }

@@ -102,7 +102,6 @@ router.get('/random/:occasion/:category/:pieceItem', isAuthenticated, async (req
 
 router.post('/save', isAuthenticated, (req, res, next) => {
     req.body.ownerId = req.payload.id;
-    console.log(req.body)
     Outfit.create(req.body)
         .then(outfit => {
             User.findByIdAndUpdate(req.payload.id, { $push: { outfits: outfit._id } })
@@ -181,7 +180,6 @@ router.get('/cat/top5', isAuthenticated, (req, res, next) => {
             const catResults = [{ name: "casual", count: 0 }, { name: "formal", count: 0 }, { name: "business", count: 0 }, { name: "sportswear", count: 0 }]
             const outfitsData = [...response];
             outfitsData.map(el => {
-                console.log(el.occasion)
                 switch (el.occasion) {
                     case "casual":
                         catResults[0].count++
