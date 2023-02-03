@@ -26,7 +26,7 @@ router.get('/random/:occasion/:category/:pieceItem', isAuthenticated, async (req
     const outfits = [];
     const outfitsStr = [];
 
-    const items = await ClothingItem.find()
+    const items = await ClothingItem.find({ ownerId: req.payload.id })
         .catch(err => res.status(500).json({ message: `Internal Server Error.` }));
 
     if (!items.length) { res.status(400).json({ message: `You have no pieces in your wardrobe yet.` }); return; };
