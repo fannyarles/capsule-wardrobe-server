@@ -11,6 +11,12 @@ const router = require('express').Router();
 const getItemMainCategory = (item) => categories.find(el => el.items.includes(item.category)).name;
 
 
+router.get('/all/items', (req, res, next) => {
+    ClothingItem.find()
+        .then(response => res.status(200).json(response))
+        .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
+});
+
 router.get('/user/:userId', isAuthenticated, (req, res, next) => {
     ClothingItem.find({ ownerId: req.params.userId })
         .then(response => res.status(200).json(response))
