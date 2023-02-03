@@ -86,11 +86,14 @@ router.get('/random/:occasion/:category/:pieceItem', isAuthenticated, async (req
         // MATCH BOTTOMS WITH TOPS
         bottomsItems.forEach(item => {
             const randTop = topsItems[Math.floor(Math.random() * topsItems.length)];
+
             const newoutfit = { type: "2", top: randTop, bottoms: item, footwear: getRandShoes(), layers: getRandLayers() };
             const strOutfit = `${newoutfit.top}|${newoutfit.bottoms}}|${newoutfit.footwear}`;
-            if (!outfitsStr.includes(strOutfit)) {
-                outfits.push(newoutfit);
-                outfitsStr.push(strOutfit)
+            if (typeof randTop !== undefined) {
+                if (!outfitsStr.includes(strOutfit)) {
+                    outfits.push(newoutfit);
+                    outfitsStr.push(strOutfit)
+                }
             }
         });
 
