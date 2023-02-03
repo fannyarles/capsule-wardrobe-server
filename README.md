@@ -1,14 +1,15 @@
+![MinFit screenshot](https://github.com/fannyarles/capsule-wardrobe-client/blob/main/public/minfit.jpg?raw=true)
+
 # About MinFit
 
-Text
+MinFit is a productivity app. Its goal is to reduce "decision fatigue", give the user more control over the image they send back to the world on a daily basis as well as helping them live a more minimal lifetsyle. MinFit gives the users an overview of their wardrobe and of all the outfits they can create based on their current clothing items.
 
 # Backend Stack
 
 ## MERN stack
 
-REST API backend using Node & Express
-
-CRUD operations managed with Mongoose.
+- REST API backend using Node & Express
+- CRUD operations managed with Mongoose.
 
 ## Models
 
