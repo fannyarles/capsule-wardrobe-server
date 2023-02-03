@@ -89,7 +89,7 @@ router.get('/random/:occasion/:category/:pieceItem', isAuthenticated, async (req
 
             const newoutfit = { type: "2", top: randTop, bottoms: item, footwear: getRandShoes(), layers: getRandLayers() };
             const strOutfit = `${newoutfit.top}|${newoutfit.bottoms}}|${newoutfit.footwear}`;
-            if (typeof randTop !== undefined) {
+            if (typeof randTop !== "undefined") {
                 if (!outfitsStr.includes(strOutfit)) {
                     outfits.push(newoutfit);
                     outfitsStr.push(strOutfit)
