@@ -86,7 +86,7 @@ router.get('/switch/:occasion/:itemType/:currId', isAuthenticated, (req, res, ne
         .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
 });
 
-router.get('/items/top5', isAuthenticated, (req, res, next) => {
+router.get('/items/top5/:userId', (req, res, next) => {
 
     ClothingItem.aggregate([
         {
@@ -104,7 +104,7 @@ router.get('/items/top5', isAuthenticated, (req, res, next) => {
             $match: {
                 $and: [
                     { length: { $ne: 0 } },
-                    { ownerId: ObjectId(req.payload.id) }
+                    { ownerId: ObjectId(req.params.userId) }
                 ]
             }
         }, {

@@ -174,8 +174,9 @@ router.delete('/delete/:outfitId', isAuthenticated, (req, res, next) => {
         .catch(err => res.status(500).json({ message: `Internal Server Error.` }))
 });
 
-router.get('/cat/top5', isAuthenticated, (req, res, next) => {
-    Outfit.find({ ownerId: req.payload.id })
+router.get('/cat/top5/:userId', (req, res, next) => {
+
+    Outfit.find({ ownerId: req.params.userId })
         .then(response => {
             const catResults = [{ name: "casual", count: 0 }, { name: "formal", count: 0 }, { name: "business", count: 0 }, { name: "sportswear", count: 0 }]
             const outfitsData = [...response];
